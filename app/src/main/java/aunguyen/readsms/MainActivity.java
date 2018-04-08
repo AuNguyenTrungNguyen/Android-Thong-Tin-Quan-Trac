@@ -22,7 +22,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkAndRequestPermissions() {
         String[] permissions = new String[]{
-                Manifest.permission.READ_SMS
+                Manifest.permission.READ_SMS,
+                Manifest.permission.RECEIVE_SMS
         };
         List<String> listPermissionsNeeded = new ArrayList<>();
         for (String permission : permissions) {
