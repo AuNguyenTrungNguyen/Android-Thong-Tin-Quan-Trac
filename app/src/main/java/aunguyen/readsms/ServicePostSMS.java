@@ -5,6 +5,12 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.Toast;
+
+import aunguyen.readsms.Retrofit.Command;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ServicePostSMS extends Service {
     @Nullable
@@ -22,8 +28,30 @@ public class ServicePostSMS extends Service {
 
     public int onStartCommand(Intent intent, int flags, int startId) {
         if(intent != null){
-            Log.i("ANTN", "Message in service: " + intent.getStringExtra("Message"));
-            Log.i("ANTN", "PhoneNumber in service: " + intent.getStringExtra("PhoneNumber"));
+            final String data = intent.getStringExtra("Message");
+            final String phoneNumber = intent.getStringExtra("PhoneNumber");
+
+            Command command = Command.getInstance();
+
+            command.postSMS(data, phoneNumber, new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if (response.isSuccessful()){
+                        Log.i("ANTN", "Post success!!!");
+                        Log.i("ANTN", "Data: " + data);
+                        Log.i("ANTN", "Phone number: " + phoneNumber);
+
+                        Toast.makeText(ServicePostSMS.this, response.body(), Toast.LENGTH_SHORT).show();
+                    }else{
+                        Log.i("ANTN", "Not success!");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    Log.i("ANTN", "Post fail!!!");
+                }
+            });
 
         }else{
             Log.i("ANTN", "Intent in service is null!");
