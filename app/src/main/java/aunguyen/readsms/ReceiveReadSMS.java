@@ -15,6 +15,7 @@ public class ReceiveReadSMS extends BroadcastReceiver{
 
     private static String ACTION_SMS = "android.provider.Telephony.SMS_RECEIVED";
 
+
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().equals(ACTION_SMS)) {
@@ -25,9 +26,13 @@ public class ReceiveReadSMS extends BroadcastReceiver{
                 for (int i = 0; i < pdus.length; i++) {
                     messages[i] = SmsMessage.createFromPdu((byte[])pdus[i]);
                 }
-                if (messages.length > -1) {
-                    Log.i("ANTN", "Message recieved: " + messages[0].getMessageBody());
-                }
+
+                Intent intentBroad = new Intent(context, ServicePostSMS.class);
+                intentBroad.putExtra("Message", messages[0].getDisplayMessageBody());
+                intentBroad.putExtra("PhoneNumber", messages[0].getOriginatingAddress());
+                context.startService(intentBroad);
+                Log.i("ANTN", "Send data to service!");
+
             }
         }
     }

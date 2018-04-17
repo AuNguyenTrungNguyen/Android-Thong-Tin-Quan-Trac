@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ReadSMS</string>
+    <string name="label_button_start">Start Service</string>
+    <string name="label_button_stop">Stop Service</string>
 </resources>
