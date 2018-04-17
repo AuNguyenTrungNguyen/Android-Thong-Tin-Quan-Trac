@@ -51,7 +51,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void checkAndRequestPermissions() {
         String[] permissions = new String[]{
                 Manifest.permission.READ_SMS,
-                Manifest.permission.RECEIVE_SMS
+                Manifest.permission.RECEIVE_SMS,
+                Manifest.permission.INTERNET
         };
         List<String> listPermissionsNeeded = new ArrayList<>();
         for (String permission : permissions) {
