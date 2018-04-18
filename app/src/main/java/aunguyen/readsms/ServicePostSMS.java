@@ -44,7 +44,7 @@ public class ServicePostSMS extends Service {
                         Toast.makeText(ServicePostSMS.this, response.body(), Toast.LENGTH_SHORT).show();
                     }else{
                         Log.i("ANTN", "Not success!");
-                        Toast.makeText(ServicePostSMS.this, response.body(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ServicePostSMS.this, "Post fail!!!", Toast.LENGTH_SHORT).show();
                     }
                 }
 
