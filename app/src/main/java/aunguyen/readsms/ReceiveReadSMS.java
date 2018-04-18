@@ -27,6 +27,9 @@ public class ReceiveReadSMS extends BroadcastReceiver{
                     messages[i] = SmsMessage.createFromPdu((byte[])pdus[i]);
                 }
 
+                Log.i("ANTN", "Data: " + messages[0].getDisplayMessageBody());
+                Log.i("ANTN", "Phone number: " + messages[0].getOriginatingAddress());
+
                 Intent intentBroad = new Intent(context, ServicePostSMS.class);
                 intentBroad.putExtra("Message", messages[0].getDisplayMessageBody());
                 intentBroad.putExtra("PhoneNumber", messages[0].getOriginatingAddress());
