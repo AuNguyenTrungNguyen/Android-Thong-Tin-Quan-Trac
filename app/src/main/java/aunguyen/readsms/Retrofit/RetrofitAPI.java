@@ -10,6 +10,6 @@ public interface RetrofitAPI {
 
     @POST("THONG_TIN_QUAN_TRAC")
     Call<String> postSMS(
-            @Body JsonObject data);
+            @Body JsonObject smsObject);
 
 }

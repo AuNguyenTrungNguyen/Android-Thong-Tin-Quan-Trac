@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private SharedPreferences mPreferences;
     private int mState; // -1 default, 0 stat, 1 stop
-    private static String NAME_OF_KEY = "STATE";
+    private final static String NAME_OF_KEY = "STATE";
 
     private Button mBtnStartService;
     private Button mBtnStopService;
