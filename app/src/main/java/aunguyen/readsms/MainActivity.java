@@ -11,16 +11,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import aunguyen.readsms.Retrofit.Constant;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
     private SharedPreferences mPreferences;
     private int mState; // -1 default, 0 stat, 1 stop
-    private final static String NAME_OF_KEY = "STATE";
 
+    private EditText mEdtURL;
     private Button mBtnStartService;
     private Button mBtnStopService;
     
@@ -66,10 +69,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void addControls() {
+        mEdtURL = findViewById(R.id.edt_url);
         mBtnStartService = findViewById(R.id.btn_start_service);
         mBtnStopService = findViewById(R.id.btn_stop_service);
 
-        mPreferences = getPreferences(MODE_PRIVATE);
+        mPreferences = this.getSharedPreferences(Constant.NAME_REF, MODE_PRIVATE);
     }
 
     private void addEvents() {
@@ -78,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void checkState(){
-        mState = mPreferences.getInt(NAME_OF_KEY, -1);
+        mState = mPreferences.getInt(Constant.STATE_KEY, -1);
 
         if(mState == -1){
             stopService();
@@ -109,15 +113,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void startService(){
+
+        String url = mEdtURL.getText().toString();
+        SharedPreferences.Editor editor = mPreferences.edit();
+
+        if(!url.equals("")){
+            editor.putString(Constant.URL_KEY, url);
+        }else{
+            editor.putString(Constant.URL_KEY, "http://www.apireceivesms.somee.com/");
+        }
+        editor.apply();
+
+        mEdtURL.setEnabled(false);
+
         PackageManager pm  = MainActivity.this.getPackageManager();
         ComponentName componentName = new ComponentName(MainActivity.this, ReceiveReadSMS.class);
         pm.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
                 PackageManager.DONT_KILL_APP);
         Log.i("ANTN", "Receive ENABLED!");
-
     }
 
     private void stopService(){
+
+        mEdtURL.setEnabled(true);
+
         PackageManager pm  = MainActivity.this.getPackageManager();
         ComponentName componentName = new ComponentName(MainActivity.this, ReceiveReadSMS.class);
         pm.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
@@ -128,7 +147,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void saveState(int state){
         SharedPreferences.Editor editor = mPreferences.edit();
         mState = state;
-        editor.putInt(NAME_OF_KEY, state);
+        editor.putInt(Constant.STATE_KEY, state);
         editor.apply();
     }
 

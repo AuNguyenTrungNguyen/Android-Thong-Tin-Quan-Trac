@@ -2,6 +2,7 @@ package aunguyen.readsms;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,7 +13,8 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.util.Date;
 
-import aunguyen.readsms.Retrofit.Command;
+import aunguyen.readsms.Retrofit.Constant;
+import aunguyen.readsms.Retrofit.Server;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -46,35 +48,43 @@ public class ServicePostSMS extends Service {
             long millisecond = Long.parseLong(time);
             String finalTime = DateFormat.format("yyyy/MM/dd HH:mm:ss", new Date(millisecond)).toString();
 
-            Command command = Command.getInstance();
-            final String finalPhone = phone;
+            SharedPreferences preferences = this.getSharedPreferences(Constant.NAME_REF, MODE_PRIVATE);
+            String url = preferences.getString(Constant.URL_KEY, "");
 
-            Log.i("ANTN", "Data: " + data);
-            Log.i("ANTN", "Phone number: " + finalPhone);
-            Log.i("ANTN", "Time: " + finalTime);
+            Log.i("ANTN", "URL: " + url);
 
-            command.postSMS(data, finalPhone, finalTime, new Callback<String>() {
-                @Override
-                public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
-                    if (response.isSuccessful()){
-                        Log.i("ANTN", "Post success!!!");
-                        Toast.makeText(ServicePostSMS.this, response.body(), Toast.LENGTH_SHORT).show();
-                    }else{
-                        Log.i("ANTN", "Not success!");
-                        try {
-                            Log.i("ANTN", response.errorBody().string());
-                        } catch (IOException e) {
+            if(!url.equals("")){
+                Server server = new Server(this, url);
+
+                Log.i("ANTN", "Data: " + data);
+                Log.i("ANTN", "Phone number: " + phone);
+                Log.i("ANTN", "Time: " + finalTime);
+
+                server.postSMS(data, phone, finalTime, new Callback<String>() {
+                    @Override
+                    public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
+                        if (response.isSuccessful()){
+                            Log.i("ANTN", "Post success!!!");
+                            Toast.makeText(ServicePostSMS.this, response.body(), Toast.LENGTH_SHORT).show();
+                        }else{
+                            Log.i("ANTN", "Not success!");
+                            try {
+                                Log.i("ANTN", response.errorBody().string());
+                            } catch (IOException ignored) {
+                            }
+                            Toast.makeText(ServicePostSMS.this, "Post fail!!!", Toast.LENGTH_SHORT).show();
                         }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
+                        Log.i("ANTN", "Post fail!!!");
                         Toast.makeText(ServicePostSMS.this, "Post fail!!!", Toast.LENGTH_SHORT).show();
                     }
-                }
-
-                @Override
-                public void onFailure(Call<String> call, Throwable t) {
-                    Log.i("ANTN", "Post fail!!!");
-                    Toast.makeText(ServicePostSMS.this, "Post fail!!!", Toast.LENGTH_SHORT).show();
-                }
-            });
+                });
+            }else{
+                Log.i("ANTN", "URL is empty!");
+            }
 
         }else{
             Log.i("ANTN", "Intent in service is null!");

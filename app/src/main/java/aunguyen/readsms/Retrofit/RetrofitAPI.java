@@ -8,7 +8,7 @@ import retrofit2.http.POST;
 
 public interface RetrofitAPI {
 
-    @POST("THONG_TIN_QUAN_TRAC")
+    @POST("api/THONG_TIN_QUAN_TRAC")
     Call<String> postSMS(
             @Body JsonObject smsObject);
 
